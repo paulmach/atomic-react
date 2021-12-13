@@ -49,4 +49,12 @@ context("ADataTable", () => {
       "DataTable 1"
     );
   });
+
+  it("toggles expandable table cells", () => {
+    cy.get("#expandable-rows + .playground td button").eq(0).should("have.attr", "aria-expanded", "false");
+    cy.get("#expandable-rows + .playground td button").eq(0).click();
+    cy.get("#expandable-rows + .playground td button").eq(0).should("have.attr", "aria-expanded", "true");
+    cy.get("#expandable-rows + .playground td button").eq(0).click();
+    cy.get("#expandable-rows + .playground td button").eq(0).should("have.attr", "aria-expanded", "false");
+  });
 });

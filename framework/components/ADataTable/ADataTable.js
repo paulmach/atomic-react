@@ -1,6 +1,5 @@
-import _ from "lodash";
 import PropTypes from "prop-types";
-import React, {forwardRef, useMemo, useRef, useState} from "react";
+import React, {forwardRef, useState} from "react";
 
 import AIcon from "../AIcon";
 import ASimpleTable from "../ASimpleTable";
@@ -9,20 +8,11 @@ import "./ADataTable.scss";
 const TableHeader = (props) => <th role='columnheader' className='a-data-table__header' {...props} />;
 const TableRow = (props) => <tr role='row' className='a-data-table__row' {...props} />;
 const TableCell = (props) => <td role='cell' className='a-data-table__cell' {...props} />;
-const uniqueRowId = Symbol('uuid');
 
 const ADataTable = forwardRef(
-  ({className: propsClassName, expandable, headers, items: propsItems, onSort, sort, ...rest}, ref) => {
-    const uniqueIdRef = useRef(_.uniqueId('a-data-table-'));
+  ({className: propsClassName, expandable, headers, items, onSort, sort, ...rest}, ref) => {
     const [expandedRows, setExpandedRows] = useState({});
-    const uniqueTableId = uniqueIdRef.current;
     const ExpandableComponent = expandable?.component;
-    const items = useMemo(() => {
-      return propsItems.map(item => ({
-        ...item,
-        [uniqueRowId]: _.uniqueId(`${uniqueTableId}-`),
-      }))
-    }, [propsItems]); // eslint-disable-line react-hooks/exhaustive-deps
     let className = 'a-data-table';
     if (ExpandableComponent) {
       className += ` a-data-table--expandable`;
@@ -91,6 +81,8 @@ const ADataTable = forwardRef(
                     }
 
                     headerProps.onClick = () => {
+                      setExpandedRows({});
+
                       onSort &&
                         onSort(
                           sort &&
@@ -138,15 +130,15 @@ const ADataTable = forwardRef(
             </thead>
           )}
           <tbody>
-            {sortedItems.map((x) => {
+            {sortedItems.map((x, i) => {
+              const id = `a-data-table_row_${i}`;
               const hasExpandedRowContent = ExpandableComponent &&
                 (typeof expandable.isRowExpandable === 'function'
                   ? expandable.isRowExpandable(x)
                   : true
                 );
-              const uuid = x[uniqueRowId];
               return (
-                <TableRow data-expandable-row={hasExpandedRowContent} key={uuid}>
+                <TableRow data-expandable-row={hasExpandedRowContent} key={id}>
                   {ExpandableComponent && (
                     <TableCell>
                       {hasExpandedRowContent && (
@@ -156,7 +148,7 @@ const ADataTable = forwardRef(
                           className='a-data-table__cell__btn--expand'
                           onClick={() => setExpandedRows(prev => ({...prev, [id]: !prev[id]}))}>
                           <AIcon size={12}>
-                            {expandedRows[uuid] ? "chevron-down" : "chevron-right"}
+                            {expandedRows[id] ? "chevron-down" : "chevron-right"}
                           </AIcon>
                         </button>
                       )}
@@ -176,10 +168,9 @@ const ADataTable = forwardRef(
                   ))}
                   {hasExpandedRowContent && (
                     <TableCell
-                      {..._.omit(expandable, ['component', 'isRowExpandable'])}
-                      id={uuid}
+                      id={id}
                       data-expandable-content
-                      hidden={!expandedRows[uuid]}
+                      hidden={!expandedRows[id]}
                       role='cell'>
                       <ExpandableComponent {...x} />
                     </TableCell>

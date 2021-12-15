@@ -6,9 +6,9 @@ import AIcon from "../AIcon";
 import ASimpleTable from "../ASimpleTable";
 import "./ADataTable.scss";
 
-const TableHeader = (props) => <th role='columnheader' {...props} />;
-const TableRow = (props) => <tr role='row' {...props} />;
-const TableCell = (props) => <td role='cell' {...props} />;
+const TableHeader = (props) => <th role='columnheader' className='a-data-table__header' {...props} />;
+const TableRow = (props) => <tr role='row' className='a-data-table__row' {...props} />;
+const TableCell = (props) => <td role='cell' className='a-data-table__cell' {...props} />;
 const uniqueRowId = Symbol('uuid');
 
 const ADataTable = forwardRef(
@@ -25,17 +25,11 @@ const ADataTable = forwardRef(
     }, [propsItems]); // eslint-disable-line react-hooks/exhaustive-deps
     let className = 'a-data-table';
     if (ExpandableComponent) {
-      className += '--expandable'
+      className += ` a-data-table--expandable`;
     }
     if (propsClassName) {
       className += ` ${propsClassName}`;
     }
-
-    const toggleRow = (uuid) => {
-      return () => {
-        setExpandedRows(prev => ({...prev, [uuid]: !prev[uuid]}))
-      }
-    };
 
     let sortedItems = items;
     if (sort) {
@@ -62,9 +56,13 @@ const ADataTable = forwardRef(
       items && (
         <ASimpleTable {...rest} ref={ref} className={className}>
           {headers && (
-            <thead>
+            <thead className='a-data-table__thead'>
               <TableRow>
-                {ExpandableComponent && <TableHeader><span>Toggle</span></TableHeader>}
+                {ExpandableComponent && (
+                  <TableHeader className='a-data-table__header a-data-table__header--hidden'>
+                    <span className='a-data-table__header--hidden__text'>Toggle</span>
+                  </TableHeader>
+                )}
                 {headers.map((x, i) => {
                   const headerProps = {
                     className: `a-data-table__header ${
@@ -148,15 +146,15 @@ const ADataTable = forwardRef(
                 );
               const uuid = x[uniqueRowId];
               return (
-                <TableRow data-expandable-row={hasExpandedRowContent} key={uuid} className='a-data-table__row'>
+                <TableRow data-expandable-row={hasExpandedRowContent} key={uuid}>
                   {ExpandableComponent && (
                     <TableCell>
                       {hasExpandedRowContent && (
                         <button
-                          aria-expanded={expandedRows[uuid] ? true : false}
-                          aria-controls={uuid}
-                          className='a-data-table--expandable__cell__btn'
-                          onClick={toggleRow(uuid)}>
+                          aria-expanded={expandedRows[id] ? true : false}
+                          aria-controls={id}
+                          className='a-data-table__cell__btn--expand'
+                          onClick={() => setExpandedRows(prev => ({...prev, [id]: !prev[id]}))}>
                           <AIcon size={12}>
                             {expandedRows[uuid] ? "chevron-down" : "chevron-right"}
                           </AIcon>
@@ -167,7 +165,7 @@ const ADataTable = forwardRef(
                   {headers.map((y, j) => (
                     <TableCell
                       key={`a-data-table_cell_${j}`}
-                      className={`text-${y.align || "start"} ${
+                      className={`a-data-table__cell text-${y.align || "start"} ${
                         y.cell?.className || ""
                       }`.trim()}
                       role='cell'>

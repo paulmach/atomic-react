@@ -1,5 +1,5 @@
 {
-  "name": "@cisco-ats/atomic-react",
+  "name": "@cisco-sbg-ui/atomic-react",
   "version": "2.15.0",
   "description": "",
   "main": "index.js",
@@ -19,6 +19,7 @@
     "cypress:lib": "cypress run --config integrationFolder=lib-demo",
     "dev": "cross-env WAIT_ON_TIMEOUT=600000 start-server-and-test start http://localhost:8081 cypress:open",
     "dev:lib": "cross-env BABEL_ENV=lib-demo webpack serve --config webpack.lib-demo.config.js",
+    "publish-package": "rimraf lib && npm ci && npm run build && npm publish",
     "start": "gatsby develop -p 8081",
     "test:lint": "eslint framework --max-warnings 0",
     "test:components": "cross-env WAIT_ON_TIMEOUT=600000 INSTRUMENT=true start-server-and-test start http://localhost:8081 cypress:run",
@@ -108,14 +109,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/threatgrid/atomic-react.git"
+    "url": "git+https://github.com/cisco-sbg-ui/atomic-react.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/threatgrid/atomic-react/issues"
+    "url": "https://github.com/cisco-sbg-ui/atomic-react/issues"
   },
-  "homepage": "https://github.com/threatgrid/atomic-react#readme",
+  "homepage": "https://github.com/cisco-sbg-ui/atomic-react#readme",
   "sideEffects": [
     "**/*.scss"
   ]

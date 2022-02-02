@@ -1,10 +1,11 @@
 import PropTypes from "prop-types";
-import React, {forwardRef, useState} from "react";
+import React, {forwardRef, useMemo, useState} from "react";
 
 import AIcon from "../AIcon";
 import ASimpleTable from "../ASimpleTable";
 import "./ADataTable.scss";
 
+let rowId = 0;
 const TableHeader = (props) => <th role='columnheader' className='a-data-table__header' {...props} />;
 const TableRow = (props) => <tr role='row' className='a-data-table__row' {...props} />;
 const TableCell = (props) => <td role='cell' className='a-data-table__cell' {...props} />;
@@ -12,7 +13,7 @@ const TableCell = (props) => <td role='cell' className='a-data-table__cell' {...
 const ADataTable = forwardRef(
   ({className: propsClassName, expandable, headers, items, onSort, sort, ...rest}, ref) => {
     const [expandedRows, setExpandedRows] = useState({});
-    const ExpandableComponent = expandable?.component;
+    const ExpandableComponent = useMemo(() => expandable?.component, [expandable]);
     let className = 'a-data-table';
     if (ExpandableComponent) {
       className += ` a-data-table--expandable`;
@@ -138,7 +139,7 @@ const ADataTable = forwardRef(
                   : true
                 );
               return (
-                <TableRow data-expandable-row={hasExpandedRowContent} key={id}>
+                <TableRow data-expandable-row={hasExpandedRowContent} key={rowId++}>
                   {ExpandableComponent && (
                     <TableCell>
                       {hasExpandedRowContent && (
